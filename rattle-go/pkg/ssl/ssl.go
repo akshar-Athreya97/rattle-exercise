@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func CheckSSLExpiry(domain string, port int) (time.Duration, error) {
+func CheckSSLExpiry(domain string, port int) (int, error) {
 	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%d", domain, port), 10*time.Second)
 	if err != nil {
 		return 0, err
@@ -27,5 +27,5 @@ func CheckSSLExpiry(domain string, port int) (time.Duration, error) {
 	expiresOn := cert.NotAfter
 	daysLeft := time.Until(expiresOn)
 
-	return daysLeft, nil
+	return int(daysLeft.Hours() / 24), nil
 }

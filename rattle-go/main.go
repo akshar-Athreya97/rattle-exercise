@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/akshar-Athreya97/rattle-exercise/rattle-go/pkg/email"
 	"github.com/akshar-Athreya97/rattle-exercise/rattle-go/pkg/ssl"
@@ -45,14 +44,17 @@ func main() {
 	}
 
 	daysLeft, err := ssl.CheckSSLExpiry(domainFlag, portFlag)
+
 	if err != nil {
 		fmt.Printf("Error checking SSL cert: %v", err)
 		os.Exit(1)
+	} else {
+		fmt.Printf("Amount of days left for cert expiry for %s: %v days", domainFlag, daysLeft)
 	}
 
 	threshold := 15
 
-	if daysLeft < time.Duration(threshold) && emailPresent && recPresent && passPresent {
+	if daysLeft < threshold && emailPresent && recPresent && passPresent {
 		subject := fmt.Sprintf("SSL Certificate Expiry alert - %s", domainFlag)
 		body := fmt.Sprintf("The ssl certificate for %s is expiring in %v days", domainFlag, daysLeft)
 		err := email.SendEmail(emailFlag, passFlag, recFlag, subject, body)
